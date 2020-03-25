@@ -5,8 +5,7 @@ import time
 users = []
 
 BUFFER_SIZE = 2048
-# IP = "192.168.1.255"
-IP = "255.255.255.255"
+IP = "192.168.1.255"
 PORT = 5000
 
 socket = socket(AF_INET, SOCK_DGRAM)
