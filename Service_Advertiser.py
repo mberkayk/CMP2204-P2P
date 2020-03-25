@@ -8,7 +8,9 @@ import time
 # usrnameFile.write(username)
 # usrNameFileSize = os.path.getsize(usrNameFileAddr)
 
-IP = "192.168.1.255"
+# IP = "192.168.1.255"
+IP = "255.255.255.255"
+
 PORT = 5000
 
 socket = socket(AF_INET, SOCK_DGRAM)
