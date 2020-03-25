@@ -10,6 +10,7 @@ IP = "255.255.255.255"
 PORT = 5000
 
 socket = socket(AF_INET, SOCK_DGRAM)
+socket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
 socket.bind((IP, PORT))
 print("bound")
 
