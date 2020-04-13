@@ -20,9 +20,9 @@ def sliceFile(content_name):
 	        chunk = infile.read(int(CHUNK_SIZE))
 	chunk_file.close()
 
-SERVER_PORT = 5001;
-SERVER_IP = '192.168.1.255'
-BUFFER_SIZE = 1000
+SERVER_PORT = 5001
+SERVER_IP = ''
+BUFFER_SIZE = 1024
 
 socket = socket(AF_INET, SOCK_STREAM)
 socket.bind((SERVER_IP, SERVER_PORT))

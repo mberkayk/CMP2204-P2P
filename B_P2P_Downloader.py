@@ -23,7 +23,7 @@ selectedFileIndex = int(input())
 requestPy = {
 	"filename": ""
 }
-PORT = 5005
+PORT = 5001
 BUFFER_SIZE = 1024
 socket = socket(AF_INET, SOCK_STREAM)
 for i in range(1, 6):
