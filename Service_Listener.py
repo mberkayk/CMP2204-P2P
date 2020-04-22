@@ -2,15 +2,25 @@ from socket import *
 import os
 import time
 import json
-
 import sys
+import ipaddress
+
+
+# get the ip address
+s = socket(AF_INET, SOCK_DGRAM)
+s.connect(("8.8.8.8", 80))
+arr = s.getsockname()[0].split('.')
+s.close()
+arr[3] = '255'
+
+IP = arr[0] + '.' + arr[1] + '.' + arr[2] + '.' + arr[3]
+PORT = 5000
 
 BUFFER_SIZE = 2048
-PORT = 5000
 
 socket = socket(AF_INET, SOCK_DGRAM)
 socket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-socket.bind(('', PORT))
+socket.bind((IP, PORT))
 print("socket bound to the port", PORT)
 
 contentDictionary = json.loads('{}')
