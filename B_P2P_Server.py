@@ -1,6 +1,6 @@
-from socket import *
+import socket
 import os
-import time
+from datetime import datetime
 import math
 import sys
 import json
@@ -14,7 +14,7 @@ def sliceFile(content_name):
 	with open(fileURL, 'rb') as infile:
 	    chunk = infile.read(int(CHUNK_SIZE))
 	    while chunk:
-	        chunkname = content_name+'_'+str(index)
+	        chunkname = content_name.replace('.png', '')+'_'+str(index)
 	        chunk_addr = 'sliced_files/'+chunkname
 	        with open(chunk_addr,'wb+') as chunk_file:
 	            chunk_file.write(chunk)
@@ -22,17 +22,17 @@ def sliceFile(content_name):
 	        chunk = infile.read(int(CHUNK_SIZE))
 	chunk_file.close()
 
-s = socket(AF_INET, SOCK_DGRAM)
-s.connect(("8.8.8.8", 80))
-SERVER_IP = s.getsockname()[0]
-s.close()
+ts = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # temp socket
+ts.connect(("8.8.8.8", 80))
+SERVER_IP = ts.getsockname()[0]
+ts.close()
 SERVER_PORT = 5001
 
 BUFFER_SIZE = 4096
 
-socket = socket(AF_INET, SOCK_STREAM)
-socket.bind((SERVER_IP, SERVER_PORT))
-socket.listen(1)
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.bind((SERVER_IP, SERVER_PORT))
+s.listen(2)
 print("Server is listening!")
 
 #Assumes there are no sub-directories in this directory
@@ -51,18 +51,24 @@ sliceFile(selectedFileName)
 
 while True:
 	try:
-		conn, addr = socket.accept()
+		conn, addr = s.accept()
 		print("Connected to client with address of" + str(addr))
 		reqJSON = conn.recv(BUFFER_SIZE) #comes in as utf_8 encoded json
-		print(reqJSON)
+		print(str(reqJSON) + " was requested")
 		reqJSON = json.loads(reqJSON)
 		requestedChunkName = reqJSON["filename"]
 		with open("sliced_files/" + requestedChunkName, 'rb') as outFile:
 			conn.send(bytes(outFile.read()))
-		conn.close()
+			with open("upload_log.txt", 'a') as up_log:
+				now = datetime.now()
+				dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+				up_log.write(dt_string + ' ' + requestedChunkName + " to " + str(addr[0]) + '\n')
 
 	except KeyboardInterrupt:
 		conn.close()
-		socket.close()
-	except:
-		socket.close()
+		s.close()
+		sys.exit()
+	except Exception as e:
+		print(e.args)
+		s.close()
+		sys.exit()

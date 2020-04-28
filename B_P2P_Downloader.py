@@ -1,5 +1,6 @@
 import socket
 import json
+from datetime import datetime
 
 def combineSlices(content_name):
 	chunknames = [content_name+'_1', content_name+'_2', content_name+'_3', content_name+'_4', content_name+'_5']
@@ -10,8 +11,9 @@ def combineSlices(content_name):
 	            outfile.write(infile.read())
 
 contentDictionaryFile = open("contentDictionary.json", 'rt')
+contentDictionary = json.load(contentDictionaryFile)
+
 while True:
-	contentDictionary = json.load(contentDictionaryFile)
 
 	#parse contentDictionary for the available files to download
 	availableFiles = []
@@ -48,7 +50,12 @@ while True:
 			try:
 				s.connect((ip, PORT))
 				s.send(bytes(requestJSON, "utf-8"))
+				print(requestJSON + " was requested")
 				downloadedChunk = s.recv(BUFFER_SIZE)
+				with open("download_log.txt", 'a') as up_log:
+					now = datetime.now()
+					dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+					up_log.write(dt_string + ' ' + chunkToDownload + " from " + str(ip) + '\n')
 			except Exception as e:
 				s.close()
 				print("Couldn't download " + chunkToDownload + " from " + ip)
