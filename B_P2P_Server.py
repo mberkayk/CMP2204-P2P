@@ -22,7 +22,7 @@ def sliceFile(content_name):
 	        chunk = infile.read(int(CHUNK_SIZE))
 	chunk_file.close()
 
-ts = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # temp socket
+ts = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # temp socket to get the wifi interface ip
 ts.connect(("8.8.8.8", 80))
 SERVER_IP = ts.getsockname()[0]
 ts.close()
@@ -38,8 +38,9 @@ print("Server is listening!")
 #Assumes there are no sub-directories in this directory
 shared_files = os.listdir("shared_files")
 
+#asks the user to select a file to host
 for i in range(len(shared_files)):
-	if shared_files[i].endswith('.png'):
+	if shared_files[i].endswith('.png'): # discard the .png if it is in the file name
 		shared_files[i] = shared_files[i].replace(".png", '');
 	print(str(i) + ': ' + shared_files[i])
 
@@ -47,22 +48,23 @@ selection = input("Select a file number to host ")
 selectedFileName = shared_files[int(selection)] + '.png'
 print("Selected " + selectedFileName)
 
-sliceFile(selectedFileName)
+sliceFile(selectedFileName) # prepare the selected file for hosting
 
 while True:
 	try:
 		conn, addr = s.accept()
 		print("Connected to client with address of" + str(addr))
-		reqJSON = conn.recv(BUFFER_SIZE) #comes in as utf_8 encoded json
+		reqJSON = conn.recv(BUFFER_SIZE) #the request from the client comes in as utf_8 encoded json
 		print(str(reqJSON) + " was requested")
 		reqJSON = json.loads(reqJSON)
-		requestedChunkName = reqJSON["filename"]
+		requestedChunkName = reqJSON["filename"] #load and parse the request json
 		with open("sliced_files/" + requestedChunkName, 'rb') as outFile:
-			conn.send(bytes(outFile.read()))
-			with open("upload_log.txt", 'a') as up_log:
+			conn.send(bytes(outFile.read())) # send the requested chunk
+			with open("upload_log.txt", 'a') as up_log: # update the upload log
 				now = datetime.now()
 				dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
 				up_log.write(dt_string + ' ' + requestedChunkName + " to " + str(addr[0]) + '\n')
+		# The connection should be terminated by the client at this point
 
 	except KeyboardInterrupt:
 		conn.close()

@@ -10,6 +10,9 @@ def combineSlices(content_name):
 	        with open("sliced_files/" + chunk, 'rb') as infile:
 	            outfile.write(infile.read())
 
+PORT = 5001
+BUFFER_SIZE = 4096
+
 contentDictionaryFile = open("contentDictionary.json", 'rt')
 contentDictionary = json.load(contentDictionaryFile)
 
@@ -29,45 +32,45 @@ while True:
 
 	selectedFileIndex = int(input())
 
-
-
 	#request the file
 	requestPy = {
 		"filename": ""
 	}
-	PORT = 5001
-	BUFFER_SIZE = 4096
 	allChunksDownloaded = True
-	for i in range(1, 6):
-		chunkToDownload = availableFiles[selectedFileIndex] + "_" + str(i)
+	for i in range(1, 6): #iterate through chunks
+		chunkToDownload = availableFiles[selectedFileIndex] + "_" + str(i) # construct the chunk name
+		#construct the request json file
 		requestPy["filename"] = chunkToDownload
 		requestJSON = json.dumps(requestPy)
 
 		chunkDownloaded = False
-		for ip in contentDictionary[chunkToDownload]:
+		for ip in contentDictionary[chunkToDownload]: # iterate through users who are serving the chunk
 			print("asking " + ip + ' for ' + chunkToDownload)
 			s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 			try:
+				#try to connect to the user and download chunk
 				s.connect((ip, PORT))
 				s.send(bytes(requestJSON, "utf-8"))
 				print(requestJSON + " was requested")
 				downloadedChunk = s.recv(BUFFER_SIZE)
-				with open("download_log.txt", 'a') as up_log:
-					now = datetime.now()
-					dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-					up_log.write(dt_string + ' ' + chunkToDownload + " from " + str(ip) + '\n')
+				chunkDownloaded = True
 			except Exception as e:
 				s.close()
 				print("Couldn't download " + chunkToDownload + " from " + ip)
 				print(e)
 				continue
+
+		if chunkDownloaded:
+			#update the download log
+			with open("download_log.txt", 'a') as up_log:
+				now = datetime.now()
+				dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+				up_log.write(dt_string + ' ' + chunkToDownload + " from " + str(ip) + '\n')
+			#save the downloaded chunk to /sliced_files
 			with open("sliced_files/" + chunkToDownload, 'wb') as downloadedFile:
 				downloadedFile.write(downloadedChunk)
 			downloadedFile.close()
-			s.close()
-			chunkDownloaded = True
-			break
-		if chunkDownloaded:
+			s.close() # close the connection to the user who served the chunk
 			print("Chunk downloaded successfully")
 		else:
 			allChunksDownloaded = False
