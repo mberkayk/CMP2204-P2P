@@ -11,7 +11,7 @@ def combineSlices(content_name):
 	            outfile.write(infile.read())
 
 PORT = 5001
-BUFFER_SIZE = 4096
+BUFFER_SIZE = 8192
 
 contentDictionaryFile = open("contentDictionary.json", 'rt')
 contentDictionary = json.load(contentDictionaryFile)
@@ -53,9 +53,10 @@ while True:
 				s.connect((ip, PORT))
 				s.send(bytes(requestJSON, "utf-8"))
 				print(requestJSON + " was requested")
-				msg = s.recv(BUFFER_SIZE)
-				dowloadedChunk += msg
+				downloadedChunk = s.recv(BUFFER_SIZE)
+				msg = downloadedChunk
 				while len(msg) == BUFFER_SIZE:
+					print("recieved message")
 					msg = s.recv(BUFFER_SIZE)
 					downloadedChunk += msg
 				chunkIsDownloaded = True

@@ -59,7 +59,11 @@ while True:
 		reqJSON = json.loads(reqJSON)
 		requestedChunkName = reqJSON["filename"] #load and parse the request json
 		with open("sliced_files/" + requestedChunkName, 'rb') as outFile:
-			conn.send(bytes(outFile.read())) # send the requested chunk
+			totalsent = 0
+			msg = bytes(outFile.read())
+			while totalsent < len(msg)
+				sent = conn.send(msg[totalsent:])
+				totalsent += sent
 			with open("upload_log.txt", 'a') as up_log: # update the upload log
 				now = datetime.now()
 				dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
