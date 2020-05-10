@@ -1,6 +1,7 @@
 import socket
 import json
 from datetime import datetime
+import time
 
 def combineSlices(content_name):
 	chunknames = [content_name+'_1', content_name+'_2', content_name+'_3', content_name+'_4', content_name+'_5']
@@ -11,7 +12,7 @@ def combineSlices(content_name):
 	            outfile.write(infile.read())
 
 PORT = 5001
-BUFFER_SIZE = 8192
+BUFFER_SIZE = 2048
 
 contentDictionaryFile = open("contentDictionary.json", 'rt')
 contentDictionary = json.load(contentDictionaryFile)
@@ -53,11 +54,13 @@ while True:
 				s.connect((ip, PORT))
 				s.send(bytes(requestJSON, "utf-8"))
 				print(requestJSON + " was requested")
+				time.sleep(3)
 				downloadedChunk = s.recv(BUFFER_SIZE)
 				msg = downloadedChunk
+				print("recieved message with the length of " + str(len(msg)))
 				while len(msg) == BUFFER_SIZE:
-					print("recieved message")
 					msg = s.recv(BUFFER_SIZE)
+					print("recieved message with the length of " + str(len(msg)))
 					downloadedChunk += msg
 				chunkIsDownloaded = True
 			except Exception as e:

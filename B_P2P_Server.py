@@ -61,9 +61,10 @@ while True:
 		with open("sliced_files/" + requestedChunkName, 'rb') as outFile:
 			totalsent = 0
 			msg = bytes(outFile.read())
-			while totalsent < len(msg)
+			while totalsent < len(msg):
 				sent = conn.send(msg[totalsent:])
 				totalsent += sent
+				print("sent " + sent)
 			with open("upload_log.txt", 'a') as up_log: # update the upload log
 				now = datetime.now()
 				dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
