@@ -75,7 +75,7 @@ while True:
 			sys.exit()
 		elif i == "online_users": # online_users command prints out all the users in the network
 			print(onlineUsers)
-		elif i == "cntDict": # prints the content dictionary
+		elif i == "cnt_dict": # prints the content dictionary
 			print(json.dumps(contentDictionary, indent = 2))
 		elif i.startswith("usr "): # usr keyword followed by the exact username of a user in the network, will print out all the files that user is sharing
 			name = i[4:]
