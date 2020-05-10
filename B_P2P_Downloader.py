@@ -54,14 +54,22 @@ while True:
 				s.connect((ip, PORT))
 				s.send(bytes(requestJSON, "utf-8"))
 				print(requestJSON + " was requested")
-				time.sleep(3)
+				#the next few lines are just a terrible way to handle this
+				time.sleep(3) # this line makes the program more reliable somehow
+				#my guess is that it gives the server enough time to send a message that is full buffer size
+				# because if in the next line recieved data size is less than buffer size
+				# the condition in line 65 will be false even though there is more data to come
 				downloadedChunk = s.recv(BUFFER_SIZE)
 				msg = downloadedChunk
 				print("recieved message with the length of " + str(len(msg)))
-				while len(msg) == BUFFER_SIZE:
+				while len(msg) == BUFFER_SIZE: # Very bad way to check if there is more data to come
+					# if the chunk size is divisible by the buffer size this will fail even though it shouldn't
 					msg = s.recv(BUFFER_SIZE)
 					print("recieved message with the length of " + str(len(msg)))
 					downloadedChunk += msg
+					 # I'm really not proud of the lines 57 to 69
+					 # Normally I would send the chunk_size in a constant sized header and recieve until
+					 # "chunk_size" many bytes how been recieved
 				chunkIsDownloaded = True
 			except Exception as e:
 				s.close()
