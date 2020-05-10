@@ -43,24 +43,29 @@ while True:
 		requestPy["filename"] = chunkToDownload
 		requestJSON = json.dumps(requestPy)
 
-		chunkDownloaded = False
+		chunkIsDownloaded = False
 		for ip in contentDictionary[chunkToDownload]: # iterate through users who are serving the chunk
 			print("asking " + ip + ' for ' + chunkToDownload)
 			s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			s.settimeout(10)
 			try:
 				#try to connect to the user and download chunk
 				s.connect((ip, PORT))
 				s.send(bytes(requestJSON, "utf-8"))
 				print(requestJSON + " was requested")
-				downloadedChunk = s.recv(BUFFER_SIZE)
-				chunkDownloaded = True
+				msg = s.recv(BUFFER_SIZE)
+				dowloadedChunk += msg
+				while len(msg) == BUFFER_SIZE:
+					msg = s.recv(BUFFER_SIZE)
+					downloadedChunk += msg
+				chunkIsDownloaded = True
 			except Exception as e:
 				s.close()
 				print("Couldn't download " + chunkToDownload + " from " + ip)
 				print(e)
 				continue
 
-		if chunkDownloaded:
+		if chunkIsDownloaded:
 			#update the download log
 			with open("download_log.txt", 'a') as up_log:
 				now = datetime.now()
