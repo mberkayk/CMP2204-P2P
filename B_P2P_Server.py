@@ -22,12 +22,11 @@ def sliceFile(content_name):
 	        chunk = infile.read(int(CHUNK_SIZE))
 	chunk_file.close()
 
-# ts = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # temp socket to get the wifi interface ip
-# ts.connect(("8.8.8.8", 80))
-# SERVER_IP = ts.getsockname()[0]
-# ts.close()
+ts = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # temp socket to get the wifi interface ip
+ts.connect(("8.8.8.8", 80))
+SERVER_IP = ts.getsockname()[0]
+ts.close()
 
-SERVER_IP = "25.255.255.255"
 SERVER_PORT = 5001
 
 BUFFER_SIZE = 4096
@@ -63,16 +62,17 @@ while True:
 		with open("sliced_files/" + requestedChunkName, 'rb') as outFile:
 			totalsent = 0
 			msg = bytes(outFile.read())
+			print(len(msg))
 			while totalsent < len(msg):
 				sent = conn.send(msg[totalsent:])
 				totalsent += sent
-				# print("sent " + sent)
+				print("sent " + str(sent))
 			with open("upload_log.txt", 'a') as up_log: # update the upload log
 				now = datetime.now()
 				dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
 				up_log.write(dt_string + ' ' + requestedChunkName + " to " + str(addr[0]) + '\n')
 		# The connection should be terminated by the client at this point
-
+		conn.close()
 	except KeyboardInterrupt:
 		conn.close()
 		s.close()
