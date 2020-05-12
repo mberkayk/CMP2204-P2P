@@ -33,7 +33,7 @@ BUFFER_SIZE = 4096
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind((SERVER_IP, SERVER_PORT))
-s.listen(2)
+s.listen(9)
 print("Server is listening!")
 
 #Assumes there are no sub-directories in this directory
