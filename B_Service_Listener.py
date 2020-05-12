@@ -13,6 +13,7 @@ s.close()
 arr[3] = '255'
 
 IP = arr[0] + '.' + arr[1] + '.' + arr[2] + '.' + arr[3] # construct the broadcast ip
+# IP = "25.255.255.255"
 PORT = 5000
 
 BUFFER_SIZE = 4096

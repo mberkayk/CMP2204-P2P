@@ -26,6 +26,7 @@ ts = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # temp socket to get the w
 ts.connect(("8.8.8.8", 80))
 SERVER_IP = ts.getsockname()[0]
 ts.close()
+# SERVER_IP = "25.255.255.255"
 SERVER_PORT = 5001
 
 BUFFER_SIZE = 4096
@@ -64,7 +65,7 @@ while True:
 			while totalsent < len(msg):
 				sent = conn.send(msg[totalsent:])
 				totalsent += sent
-				print("sent " + sent)
+				# print("sent " + sent)
 			with open("upload_log.txt", 'a') as up_log: # update the upload log
 				now = datetime.now()
 				dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
