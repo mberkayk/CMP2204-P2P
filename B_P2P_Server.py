@@ -22,11 +22,12 @@ def sliceFile(content_name):
 	        chunk = infile.read(int(CHUNK_SIZE))
 	chunk_file.close()
 
-ts = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # temp socket to get the wifi interface ip
-ts.connect(("8.8.8.8", 80))
-SERVER_IP = ts.getsockname()[0]
-ts.close()
-# SERVER_IP = "25.255.255.255"
+# ts = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # temp socket to get the wifi interface ip
+# ts.connect(("8.8.8.8", 80))
+# SERVER_IP = ts.getsockname()[0]
+# ts.close()
+
+SERVER_IP = "25.255.255.255"
 SERVER_PORT = 5001
 
 BUFFER_SIZE = 4096

@@ -19,13 +19,14 @@ advertisedFile.write(dictionaryJSON)
 advertisedFile.close()
 
 # get the ip address of the wifi interface
-s = socket(AF_INET, SOCK_DGRAM)
-s.connect(("8.8.8.8", 80))
-arr = s.getsockname()[0].split('.')
-s.close()
-arr[3] = '255'
-IP = arr[0] + '.' + arr[1] + '.' + arr[2] + '.' + arr[3] # construct the broadcast ip
-# IP="25.255.255.255"
+# s = socket(AF_INET, SOCK_DGRAM)
+# s.connect(("8.8.8.8", 80))
+# arr = s.getsockname()[0].split('.')
+# s.close()
+# arr[3] = '255'
+# IP = arr[0] + '.' + arr[1] + '.' + arr[2] + '.' + arr[3] # construct the broadcast ip
+
+IP="25.255.255.255"
 PORT = 5000
 
 socket = socket(AF_INET, SOCK_DGRAM)
